@@ -1,12 +1,12 @@
 var source, destination, auxiliary;
-var colors = ['blue', 'red', 'yellow', 'green', 'darkbrown', 'magenta', 'purple', 'grey', 'white', 'darkgrey', 'pink'];
-var cw, mcw, stackSize, stepTime;
+var colors = ['blue', 'red', 'yellow', 'green', 'gray', 'magenta', 'purple', 'lightblue', 'pink'];
+var ch, cw, mcw, stackSize, stepTime;
 
 function setup() {
     createCanvas(windowWidth, 600, WEBGL);
 
     startHanoi(5, 500);
-} // https://en.wikipedia.org/wiki/Tower_of_Hanoi
+}
 
 window.onresize = function() {
     resizeCanvas(windowWidth, windowHeight);
@@ -14,14 +14,22 @@ window.onresize = function() {
 };
 
 function draw() {
-    background(0);
+    background(255);
+    noStroke();
 
+    translate(-width / 2, -height / 2);
     directionalLight(255, 255, 255, -2, -2, 1);
 
-    var w = width - 100;
-    drawStack(source, (w / 3) - mcw);
-    drawStack(auxiliary, (w / 3) * 2 - mcw);
-    drawStack(destination, w - mcw);
+    push();
+    translate(width / 2, height, - mcw * 2);
+    fill('lightgray');
+    box(width + mcw * 2, ch * 2, width / 2);
+    pop();
+
+    var w = width - 200;
+    drawStack(source,  100 + (w / 3) - mcw);
+    drawStack(auxiliary, 100 + (w / 3) * 2 - mcw);
+    drawStack(destination, 100 + w - mcw);
 }
 
 function startHanoi(sz, st) {
@@ -43,21 +51,26 @@ function startHanoi(sz, st) {
 }
 
 function calcWidths() {
-    cw = (width / 3 - (width / 4)) / stackSize;
+    cw = (width / 3 - (width / 6)) / stackSize;
     mcw = stackSize * cw;
+    ch = width / 40;
 }
 
 function drawStack(stack, x) {
     push();
 
-    translate(-width / 2, -height / 2, 0);
-    translate(x, height - 100);
+    translate(x, height - 100, -mcw / 2);
+
+    push();
+    fill('brown');
+    translate(0, - ch * 2 - 10);
+    cylinder(cw / 4, ch * stackSize + 10);
+    pop();
 
     stack.forEach(function (element) {
-        ambientMaterial(element.color);
-        noStroke();
-        cylinder(cw * element.value, 30, 48, 32);
-        translate(0, -30, 0);
+        fill(element.color);
+        cylinder(cw * element.value / 2, ch, 48, 32);
+        translate(0, -ch, 0);
     })
 
     pop();
