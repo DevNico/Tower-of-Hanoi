@@ -19,17 +19,12 @@ function draw() {
 
     translate(-width / 2, -height / 2);
     directionalLight(255, 255, 255, -2, -2, 1);
-
-    push();
-    translate(width / 2, height, - mcw * 2);
-    fill('lightgray');
-    box(width + mcw * 2, ch * 2, width / 2);
-    pop();
-
-    var w = width - 200;
-    drawStack(source,  100 + (w / 3) - mcw);
-    drawStack(auxiliary, 100 + (w / 3) * 2 - mcw);
-    drawStack(destination, 100 + w - mcw);
+    
+    var w = width - width / 10;
+    var a = width / 10 / 2;
+    drawStack(source,  a + (w / 3) - mcw);
+    drawStack(auxiliary, a + (w / 3) * 2 - mcw);
+    drawStack(destination, a + w - mcw);
 }
 
 function startHanoi(sz, st) {
