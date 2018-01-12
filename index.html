@@ -9,9 +9,41 @@
     <script src="sketch.js"></script>
 </head>
 <body>
+    <div>
+        <label for="disks">Amount of disks:</label>
+        <input type="text" name="disks" id="disks" value="5">
+        <label for="steptime">Time per move (ms)</label>
+        <input type="text" name="steptime" id="steptime" value="500">
+        <button onclick="start(document.getElementById('disks').value, document.getElementById('steptime').value);" id="sbtn">Start</button>
+        <button onclick="stop();">Stop</button>
+    </div>
+    <p>Status: <span id="status"></span></p>
     <style>
         body {
             margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        div {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            text-align: center;
+            margin: 20px auto;
+        }
+        label, input {
+            margin-right: 5px;
+        }
+        p {
+            margin: 0 auto;
+        }
+        @media screen and (max-width: 800px) {
+            label, input {
+                flex: 48%;
+            }
+            button {
+                flex-grow: 1;
+            }
         }
     </style>
 </body>

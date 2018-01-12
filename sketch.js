@@ -1,15 +1,13 @@
 var source, destination, auxiliary;
-var colors = ['blue', 'red', 'darkgrey', 'green', 'grey', 'magenta', 'purple', 'lightblue', 'darkred', 'darkblue'];
+var colors = ['blue', 'red', 'darkgrey', 'green', 'yellow', 'magenta', 'purple', 'lightblue', 'darkred', 'darkblue'];
 var stackSize, stepTime;
+var running, done;
 
 var dW, dH;
 
 // p5 setup function
 function setup() {
     createCanvas(windowWidth, 600);
-
-    // Default: initialize with 5 disks and 500ms per step
-    start(5, 500);
 }
 
 // Recalculate values / Resize canvas on window resize
@@ -22,31 +20,44 @@ window.addEventListener('resize', () => {
 function draw() {
     background(255);
 
-    // Helper variables for positioning
-    var s = width / 10;
-    var w = width - s;
-    var w3 = w / 3;
+    document.getElementById('status').innerText = (!running ? "Gestoppt" : "Läuft");
+    if(running || done) {
+        // Helper variables for positioning
+        var s = width / 10;
+        var w = width - s;
+        var w3 = w / 3;
 
-    // Draw Base & Poles
-    fill('brown');
-    rect(w3 - 2.5 * s, height - dH * (stackSize - 1), w, dH * 1.3, 20);
-    rect(w3 - s - dH / 2, height - dH * stackSize - dH * stackSize, dH, dH * (stackSize + 1), 10, 10, 0, 0);
-    rect(w3 * 2 - s - dH / 2, height - dH * stackSize  - dH * stackSize, dH, dH * (stackSize + 1), 10, 10, 0, 0);
-    rect(w - s - dH / 2, height - dH * stackSize - dH * stackSize, dH, dH * (stackSize + 1), 10, 10, 0, 0);
+        // Draw Base & Poles
+        fill('brown');
+        rect(w3 - 2.5 * s, height - dH * (stackSize - 1), w, dH * 1.3, 20);
+        rect(w3 - s - dH / 2, height - dH * stackSize - dH * stackSize, dH, dH * (stackSize + 1), 10, 10, 0, 0);
+        rect(w3 * 2 - s - dH / 2, height - dH * stackSize  - dH * stackSize, dH, dH * (stackSize + 1), 10, 10, 0, 0);
+        rect(w - s - dH / 2, height - dH * stackSize - dH * stackSize, dH, dH * (stackSize + 1), 10, 10, 0, 0);
 
-    // Draw Stacks
-    drawStack(source, w3 - s); // Source
+        // Draw Stacks
+        drawStack(source, w3 - s); // Source
 
-    if(stackSize % 2 != 0) {
-        drawStack(auxiliary, w3 * 2 - s); // Auxiliary
-        drawStack(destination, w - s); // Destination
-    } else {
-        drawStack(destination, w3 * 2 - s); // Auxiliary
-        drawStack(auxiliary, w - s); // Destination
+        if(stackSize % 2 != 0) {
+            drawStack(auxiliary, w3 * 2 - s); // Auxiliary
+            drawStack(destination, w - s); // Destination
+        } else {
+            drawStack(destination, w3 * 2 - s); // Auxiliary
+            drawStack(auxiliary, w - s); // Destination
+        }
     }
 }
 
 function start(sz, st) {
+    if(running) return;
+    // Parsing
+    sz = parseInt(sz);
+    st = parseInt(st);
+
+    if(isNaN(sz) || isNaN(st)) {
+        alert("Error! You may only input numbers!");
+        return;
+    }
+
     // Initialize / Clear stacks
     source = [];
     destination = [];
@@ -62,7 +73,6 @@ function start(sz, st) {
 
     // Fill source stack with appropriate amount of disks
     for (var i = stackSize; i > 0; i--) {
-        console.log(colors[i - 1]);
         source.push({
             value: i,
             color: colors[i - 1]
@@ -71,6 +81,14 @@ function start(sz, st) {
 
     // Start the solving process
     hanoi();
+    running = true;
+    done = false;
+    document.getElementById('sbtn').disabled = true;
+}
+
+function stop() {
+    done = true;
+    running = false;
 }
 
 // Calculate disk sizes based on the window width
@@ -101,10 +119,16 @@ function hanoi() {
     var totalMoves = Math.pow(2, source.length);
 
     // Execute step function as often as required
-    var loop = function (i) {
+    loop = function (i) {
         step(i, function () {
             i += 1;
-            if (i < totalMoves) loop(i);
+            if (i < totalMoves && !done)
+                loop(i);
+            else {
+                running = false;
+                done = true;
+                document.getElementById('sbtn').disabled = false;
+            }
         });
     }
     loop(1);
