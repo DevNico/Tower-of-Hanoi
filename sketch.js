@@ -89,9 +89,9 @@ function drawStack(stack, x) {
         rect(x - eW / 2, height - dH * stackSize - counter * dH, eW, dH, 20);
 
         fill('white');
-        textSize(dH - 2);
+        textSize(dH - 3);
         textAlign(CENTER);
-        text(element.value, x - eW / 2, height - dH * stackSize - counter * dH + 1, eW, dH);
+        text(element.value, x - eW / 2 + textWidth(element.value) / 4, height - dH * stackSize - counter * dH + 1, eW, dH);
         counter++;
     })
 }
